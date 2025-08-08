@@ -41,18 +41,69 @@ export const getProducts = async (req, res) => {
 // Get single product (with reviews)
 export const getProduct = async (req, res) => {
   try {
+    console.log('Fetching product with ID:', req.params.id);
+    
     const product = await db.Product.findByPk(req.params.id, {
       include: [
         { model: db.Category, attributes: ['id', 'name'] },
-        {
-          model: db.Review,
-          include: [{ model: db.User, attributes: ['id', 'name'] }],
-        },
       ],
     });
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-    res.json(product);
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Fetch reviews with user data using MySQL-compatible raw query
+    const reviews = await db.sequelize.query(`
+      SELECT 
+        r.id,
+        r.rating,
+        r.comment,
+        r.createdAt,
+        u.id as user_id,
+        u.name as user_name,
+        u.avatar as user_avatar
+      FROM Reviews r
+      LEFT JOIN Users u ON r.userId = u.id
+      WHERE r.productId = :productId
+      ORDER BY r.createdAt DESC
+    `, {
+      replacements: { productId: req.params.id },
+      type: db.sequelize.QueryTypes.SELECT
+    });
+
+    console.log('Found reviews with raw query:', reviews.length);
+    console.log('Sample review data:', reviews[0]);
+
+    // Transform the raw query results to match expected format
+    const transformedReviews = reviews.map(review => ({
+      id: review.id,
+      rating: review.rating,
+      comment: review.comment,
+      createdAt: review.createdAt,
+      user: {
+        id: review.user_id,
+        name: review.user_name,
+        avatar: review.user_avatar
+      }
+    }));
+
+    // Combine product and reviews
+    const productWithReviews = {
+      ...product.toJSON(),
+      reviews: transformedReviews
+    };
+
+    console.log('Product with reviews:', {
+      id: productWithReviews.id,
+      title: productWithReviews.title,
+      reviewCount: productWithReviews.reviews.length,
+      sampleReview: productWithReviews.reviews[0]
+    });
+
+    res.json(productWithReviews);
   } catch (err) {
+    console.error('Error in getProduct:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -60,7 +111,24 @@ export const getProduct = async (req, res) => {
 // Create product (admin only)
 export const createProduct = async (req, res) => {
   try {
-    const { title, description, price, discount, images, stock, categoryId } = req.body;
+    const { 
+      title, 
+      description, 
+      price, 
+      discount, 
+      images, 
+      stock, 
+      categoryId,
+      brand,
+      model,
+      weight,
+      dimensions,
+      color,
+      material,
+      warranty,
+      specifications
+    } = req.body;
+    
     const product = await db.Product.create({
       title,
       description,
@@ -69,6 +137,14 @@ export const createProduct = async (req, res) => {
       images,
       stock,
       categoryId,
+      brand,
+      model,
+      weight,
+      dimensions,
+      color,
+      material,
+      warranty,
+      specifications,
     });
     res.status(201).json(product);
   } catch (err) {
@@ -79,7 +155,24 @@ export const createProduct = async (req, res) => {
 // Update product (admin only)
 export const updateProduct = async (req, res) => {
   try {
-    const { title, description, price, discount, images, stock, categoryId } = req.body;
+    const { 
+      title, 
+      description, 
+      price, 
+      discount, 
+      images, 
+      stock, 
+      categoryId,
+      brand,
+      model,
+      weight,
+      dimensions,
+      color,
+      material,
+      warranty,
+      specifications
+    } = req.body;
+    
     const product = await db.Product.findByPk(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
@@ -90,6 +183,14 @@ export const updateProduct = async (req, res) => {
     product.images = images ?? product.images;
     product.stock = stock ?? product.stock;
     product.categoryId = categoryId ?? product.categoryId;
+    product.brand = brand ?? product.brand;
+    product.model = model ?? product.model;
+    product.weight = weight ?? product.weight;
+    product.dimensions = dimensions ?? product.dimensions;
+    product.color = color ?? product.color;
+    product.material = material ?? product.material;
+    product.warranty = warranty ?? product.warranty;
+    product.specifications = specifications ?? product.specifications;
 
     await product.save();
     res.json(product);

@@ -1,5 +1,7 @@
 import db from '../models/index.js';
 import { Op } from 'sequelize';
+import cloudinary from '../utils/cloudinary.js';
+import { hashPassword } from '../utils/hash.js';
 
 // Get all users (admin only)
 export const getUsers = async (req, res) => {
@@ -61,6 +63,99 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+// Get current user profile
+export const getCurrentUser = async (req, res) => {
+  try {
+    const user = await db.User.findByPk(req.user.id, {
+      attributes: ['id', 'name', 'email', 'role', 'avatar', 'createdAt'],
+    });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Update current user profile
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, email, currentPassword, newPassword } = req.body;
+    const user = await db.User.findByPk(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Check if email is being changed and if it's already taken
+    if (email && email !== user.email) {
+      const existingUser = await db.User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+      user.email = email;
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    // Handle password change
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ message: 'Current password is required' });
+      }
+      
+      // Verify current password
+      const isValidPassword = await user.comparePassword(currentPassword);
+      if (!isValidPassword) {
+        return res.status(400).json({ message: 'Current password is incorrect' });
+      }
+      
+      user.password = await hashPassword(newPassword);
+    }
+
+    await user.save();
+    
+    // Return user data without password
+    const userResponse = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+      createdAt: user.createdAt,
+    };
+    
+    res.json(userResponse);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Upload avatar
+export const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    
+    cloudinary.uploader.upload_stream(
+      { folder: 'ecommerce/avatars' },
+      async (error, result) => {
+        if (error) return res.status(500).json({ message: error.message });
+        
+        try {
+          const user = await db.User.findByPk(req.user.id);
+          if (!user) return res.status(404).json({ message: 'User not found' });
+          
+          user.avatar = result.secure_url;
+          await user.save();
+          
+          res.json({ avatar: result.secure_url });
+        } catch (err) {
+          res.status(500).json({ message: err.message });
+        }
+      }
+    ).end(req.file.buffer);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 // Get user statistics
 export const getUserStats = async (req, res) => {
   try {

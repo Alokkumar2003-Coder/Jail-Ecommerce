@@ -63,12 +63,32 @@ export default function Navbar() {
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg- bg-opacity-50" onClick={toggleMobileMenu}></div>
           
+
           <div className="absolute top-0 left-0 w-64 h-full bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
             <div className="flex justify-end p-4">
               <button onClick={toggleMobileMenu}>
                 <FiX size={28} className="text-black" />
               </button>
             </div>
+
+          <div className="flex items-center space-x-4">
+            <Link href="/products" className="text-gray-700 hover:text-gray-900">
+              Products
+            </Link>
+            
+            <Link href="/blog" className="text-gray-700 hover:text-gray-900">
+              Blog
+            </Link>
+            
+            <Link href="/cart" className="text-gray-700 hover:text-gray-900 relative">
+              Cart
+              {items.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {items.length}
+                </span>
+              )}
+            </Link>
+
             
             <div className="flex flex-col space-y-8 mt-4 p-4 text-xl font-semibold text-black">
               <Link href="/clothing" onClick={toggleMobileMenu} className="hover:text-gray-900 transition-colors duration-200">Clothing</Link>
@@ -156,6 +176,7 @@ export default function Navbar() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </Link>
+
                 <Link href="/wishlist" className="relative">
                   <svg xmlns="" className="h-6 w-6 hover:text-gray-900" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -165,6 +186,22 @@ export default function Navbar() {
                       {productIds.length}
                     </span>
                   )}
+
+                <Link href="/profile" className="text-gray-700 hover:text-gray-900">
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-700 hover:text-gray-900"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Link href="/login" className="text-gray-700 hover:text-gray-900">
+                  Login
+
                 </Link>
                 <Link href="/cart" className="relative">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 hover:text-gray-900" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">

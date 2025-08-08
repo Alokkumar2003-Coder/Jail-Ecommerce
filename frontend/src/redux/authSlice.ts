@@ -6,6 +6,7 @@ interface User {
   name: string;
   email: string;
   role: string;
+  avatar?: string | null;
 }
 
 interface AuthState {
@@ -66,6 +67,18 @@ export const checkAuth = createAsyncThunk(
   }
 );
 
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (data: { name: string; email: string; currentPassword?: string; newPassword?: string }, { rejectWithValue }) => {
+    try {
+      const res = await api.put('/users/profile', data);
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Profile update failed');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -78,6 +91,11 @@ const authSlice = createSlice({
     setAuth(state, action) {
       state.user = action.payload.user;
       state.token = action.payload.token;
+    },
+    updateUserAvatar(state, action) {
+      if (state.user) {
+        state.user.avatar = action.payload;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -123,9 +141,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.token = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
       });
   },
 });
 
-export const { logout, setAuth } = authSlice.actions;
+export const { logout, setAuth, updateUserAvatar } = authSlice.actions;
 export default authSlice.reducer;

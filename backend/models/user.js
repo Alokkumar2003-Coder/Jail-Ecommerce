@@ -1,7 +1,12 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database.js';
+import bcrypt from 'bcrypt';
 
-class User extends Model {}
+class User extends Model {
+  async comparePassword(candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
+  }
+}
 
 User.init(
   {
@@ -11,6 +16,7 @@ User.init(
     password: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.ENUM('user', 'admin'), defaultValue: 'user' },
     googleId: { type: DataTypes.STRING, allowNull: true },
+    avatar: { type: DataTypes.STRING, allowNull: true },
   },
   { sequelize, modelName: 'User', timestamps: true }
 );

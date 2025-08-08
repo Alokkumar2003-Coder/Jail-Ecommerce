@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/footer';
 
 export const metadata = {
-  title: 'ECommerce Store',
+  title: 'Jail E-commerce',
   description: 'Your one-stop shop for everything you need',
 };
 

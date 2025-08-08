@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth.js';
+import carouselRoutes from './routes/carousel.js';
 import googleAuthRoutes from './routes/googleAuth.js';
 import categoryRoutes from './routes/category.js';
 import productRoutes from './routes/product.js';
@@ -11,6 +12,7 @@ import reviewRoutes from './routes/review.js';
 import paymentRoutes from './routes/payment.js';
 import analyticsRoutes from './routes/analytics.js';
 import userRoutes from './routes/user.js';
+import blogRoutes from './routes/blog.js';
 
 import passport from './middleware/googleAuth.js';
 
@@ -37,5 +39,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/blogs', blogRoutes);
+app.use('/api/carousel', carouselRoutes);
 
 export default app;

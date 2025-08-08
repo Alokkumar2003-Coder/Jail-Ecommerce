@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '../utils/axios';
+import Carousel from '@/components/Carousel';
 
 interface Category {
   id: number;
@@ -32,6 +33,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Carousel/>
       {/* Hero Section */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
