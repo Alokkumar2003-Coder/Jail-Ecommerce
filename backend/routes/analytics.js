@@ -5,7 +5,8 @@ import { authorizeRoles } from '../middleware/roles.js';
 
 const router = express.Router();
 
-router.get('/summary', authenticate, authorizeRoles('admin'), analyticsController.getSalesSummary);
+// Add both endpoints for backward compatibility
+router.get('/summary', authenticate, authorizeRoles('admin'), analyticsController.getSummary);
 router.get('/sales-by-day', authenticate, authorizeRoles('admin'), analyticsController.getSalesByDay);
 router.get('/top-products', authenticate, authorizeRoles('admin'), analyticsController.getTopProducts);
 router.get('/category-stats', authenticate, authorizeRoles('admin'), analyticsController.getCategoryStats);

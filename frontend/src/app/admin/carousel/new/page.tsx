@@ -52,11 +52,11 @@ export default function NewCarouselItemPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="w-full mx-auto">
       <h1 className="text-3xl font-bold mb-6">Add New Carousel Item</h1>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
+      <form onSubmit={handleSubmit} className="space-y-6 w-full">
+        <div className='w-full'>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Title *
           </label>
@@ -69,7 +69,7 @@ export default function NewCarouselItemPage() {
           />
         </div>
 
-        <div>
+        <div className='w-full'>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Image *
           </label>

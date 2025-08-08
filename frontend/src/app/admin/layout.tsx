@@ -23,11 +23,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navLinks = [
     // { href: '/admin', label: 'Admin' },
+    { href: '/admin/carousel', label: 'Carousel' },
     { href: '/admin/products', label: 'Products' },
     { href: '/admin/categories', label: 'Categories' },
     { href: '/admin/orders', label: 'Orders' },
     { href: '/admin/users', label: 'Users' },
     { href: '/admin/analytics', label: 'Analytics' },
+    { href: '/admin/blogs', label: 'Blog' },
+    { href: '/admin/analytics', label: 'News' },
     { href: '/', label: 'Back to Store' },
   ];
 
@@ -59,7 +62,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
+      <main className="w-full p-4">{children}</main>
     </div>
   );
 }

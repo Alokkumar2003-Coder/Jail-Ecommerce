@@ -62,7 +62,7 @@ export default function ReviewForm({ productId, onReviewSubmitted }: ReviewFormP
   }
 
   return (
-    <div className="bg-white border rounded-lg p-6">
+    <div className="bg-white border border-gray-100 shadow-lg rounded-lg p-6">
       <h3 className="text-lg font-semibold mb-4">Write a Review</h3>
       
       <form onSubmit={handleSubmit} className="space-y-4">

@@ -71,7 +71,7 @@ export default function AdminCarouselPage() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-col gap-6">
         {carouselItems.map((item) => (
           <div key={item.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div className="relative">

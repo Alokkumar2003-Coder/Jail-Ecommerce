@@ -1,7 +1,8 @@
 import db from '../models/index.js';
 import { Op, fn, col, literal } from 'sequelize';
 
-export const getSalesSummary = async (req, res) => {
+// Summary endpoint - matches frontend expectation
+export const getSummary = async (req, res) => {
   try {
     const totalOrders = await db.Order.count();
     const totalRevenue = await db.Order.sum('totalPrice', { where: { paymentStatus: 'paid' } });
@@ -60,7 +61,7 @@ export const getSalesSummary = async (req, res) => {
     
     res.json({ 
       totalOrders, 
-      totalRevenue,
+      totalRevenue: totalRevenue || 0,
       todayOrders,
       todayRevenue: todayRevenue || 0,
       monthOrders,
@@ -68,8 +69,14 @@ export const getSalesSummary = async (req, res) => {
       pendingOrders
     });
   } catch (err) {
+    console.error('Error in getSummary:', err);
     res.status(500).json({ message: err.message });
   }
+};
+
+// Keep the old function for backward compatibility
+export const getSalesSummary = async (req, res) => {
+  return getSummary(req, res);
 };
 
 export const getSalesByDay = async (req, res) => {
@@ -91,6 +98,7 @@ export const getSalesByDay = async (req, res) => {
     });
     res.json(sales);
   } catch (err) {
+    console.error('Error in getSalesByDay:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -110,6 +118,7 @@ export const getTopProducts = async (req, res) => {
     });
     res.json(topProducts);
   } catch (err) {
+    console.error('Error in getTopProducts:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -133,6 +142,7 @@ export const getCategoryStats = async (req, res) => {
     });
     res.json(categoryStats);
   } catch (err) {
+    console.error('Error in getCategoryStats:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -149,6 +159,7 @@ export const getRecentOrders = async (req, res) => {
     });
     res.json(recentOrders);
   } catch (err) {
+    console.error('Error in getRecentOrders:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -165,9 +176,10 @@ export const getInventoryStats = async (req, res) => {
       outOfStock,
       lowStock,
       totalValue: totalValue || 0,
-      stockUtilization: ((totalProducts - outOfStock) / totalProducts * 100).toFixed(1)
+      stockUtilization: totalProducts > 0 ? ((totalProducts - outOfStock) / totalProducts * 100).toFixed(1) : '0.0'
     });
   } catch (err) {
+    console.error('Error in getInventoryStats:', err);
     res.status(500).json({ message: err.message });
   }
 };
