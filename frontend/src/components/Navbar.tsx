@@ -129,10 +129,10 @@ export default function Navbar() {
       )}
 
       {/* Desktop Navbar */}
-      <div className="hidden md:block w-full border-b border-gray-200 p-4">
+      <div className="hidden md:block w-full border-b border-gray-200">
         <div className="bg-white ">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-3xl relative top-4 font-bold text-gray-900">JAIL</Link>
+            <Link href="/" className="text-4xl mx-5 relative top-4 font-bold text-gray-900">JAIL</Link>
 
             <div className="flex items-center gap-6 text-lg font-semibold">
               {navLinks.map(({ href, label }) => (
