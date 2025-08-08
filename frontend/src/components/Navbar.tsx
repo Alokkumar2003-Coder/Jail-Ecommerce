@@ -1,5 +1,4 @@
-'use client';
-
+ 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
@@ -43,9 +42,9 @@ export default function Navbar() {
           <button onClick={toggleMobileMenu} aria-label="Open menu">
             <FiMenu size={22} className="text-black" />
           </button>
-          <Link href="/search" aria-label="Search">
+          {/* <Link href="/search" aria-label="Search">
             <FiSearch size={22} className="text-black" />
-          </Link>
+          </Link> */}
         </div>
 
         <Link href="/" className="text-2xl font-bold tracking-widest text-black">JAIL</Link>
@@ -139,9 +138,9 @@ export default function Navbar() {
             <div className="flex items-center gap-4 text-black">
               <Link href="/about" className="text-sm font-medium hover:text-gray-900">About Us</Link>
 
-              {/* <Link href="/search" aria-label="Search">
-                <FiSearch size={22} />
-              </Link> */}
+               {/* <Link href="/search" aria-label="Search">
+                <FiSearch size={18} />
+              </Link>  */}
 
               <Link href="/wishlist" className="relative" aria-label="Wishlist">
                 <FiHeart size={18} />

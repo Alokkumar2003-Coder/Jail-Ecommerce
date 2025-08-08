@@ -42,14 +42,14 @@ export default function ProductCard({ product }: ProductCardProps) {
     : product.price;
 
   return (
-    <div className="bg-white border rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <div className=" p-4 shadow-lg cursor-pointer">
       {/* Product Image */}
       <Link href={`/products/${product.id}`}>
         <div className="relative">
           <img
             src={product.images?.[0] || '/placeholder.png'}
             alt={product.title}
-            className="w-full h-48 object-cover"
+            className="w-full h-48 object-contain "
           />
           {product.discount > 0 && (
             <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
