@@ -1,26 +1,21 @@
 'use client';
-
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { logout } from '../redux/authSlice';
 import {
-  FiMenu, FiSearch, FiUser, FiShoppingCart, FiX, FiHeart, FiSettings,
+  FiMenu, FiSearch, FiUser, FiShoppingCart, FiX, FiHeart, FiSettings, FiPackage,
 } from 'react-icons/fi';
 import { usePathname } from 'next/navigation';
+import OrderTracking from './OrderTracking';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showOrderTracking, setShowOrderTracking] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
   const { items } = useAppSelector((state) => state.cart);
   const { productIds } = useAppSelector((state) => state.wishlist);
-  // const dispatch = useAppDispatch();
   const pathname = usePathname();
-
-  // const handleLogout = () => {
-  //   dispatch(logout());
-  //   setIsMobileMenuOpen(false);
-  // };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -43,15 +38,19 @@ export default function Navbar() {
           <button onClick={toggleMobileMenu} aria-label="Open menu">
             <FiMenu size={22} className="text-black" />
           </button>
-          <Link href="/search" aria-label="Search">
-            <FiSearch size={22} className="text-black" />
-          </Link>
         </div>
 
         <Link href="/" className="text-2xl font-bold tracking-widest text-black">JAIL</Link>
 
         <div className="flex items-center space-x-4">
-          <Link href={user ? '/account' : '/login'} aria-label="User profile">
+          <button
+            onClick={() => setShowOrderTracking(true)}
+            aria-label="Track Order"
+            className="relative"
+          >
+            <FiPackage size={22} className="text-black" />
+          </button>
+          <Link href={user ? '/profile' : '/login'} aria-label="User profile">
             <FiUser size={22} className="text-black" />
           </Link>
           <Link href="/cart" className="relative" aria-label="Cart">
@@ -81,6 +80,15 @@ export default function Navbar() {
               <Link href="/products" onClick={toggleMobileMenu}>Products</Link>
               <Link href="/blog" onClick={toggleMobileMenu}>Blog</Link>
               <Link href="/cart" onClick={toggleMobileMenu}>Cart</Link>
+              <button
+                onClick={() => {
+                  setShowOrderTracking(true);
+                  toggleMobileMenu();
+                }}
+                className="text-left flex items-center gap-2"
+              >
+                <FiPackage size={20} /> Track Order
+              </button>
 
               {navLinks.map(({ href, label }) => (
                 <Link
@@ -100,7 +108,10 @@ export default function Navbar() {
                   <Link href="/wishlist" onClick={toggleMobileMenu} className="flex items-center gap-2">
                     <FiHeart size={20} /> Wishlist
                   </Link>
-                  <Link href="/account" onClick={toggleMobileMenu} className="flex items-center gap-2">
+                  <Link href="/orders" onClick={toggleMobileMenu} className="flex items-center gap-2">
+                    <FiPackage size={20} /> My Orders
+                  </Link>
+                  <Link href="/profile" onClick={toggleMobileMenu} className="flex items-center gap-2">
                     <FiUser size={20} /> Account
                   </Link>
                   {user?.role === 'admin' && (
@@ -108,7 +119,6 @@ export default function Navbar() {
                       <FiSettings size={20} /> Admin
                     </Link>
                   )}
-                  {/* <button onClick={handleLogout} className="text-left text-red-600">Logout</button> */}
                 </>
               ) : (
                 <Link href="/login" onClick={toggleMobileMenu}>Login</Link>
@@ -139,10 +149,6 @@ export default function Navbar() {
             <div className="flex items-center gap-4 text-black">
               <Link href="/about" className="text-sm font-medium hover:text-gray-900">About Us</Link>
 
-              {/* <Link href="/search" aria-label="Search">
-                <FiSearch size={22} />
-              </Link> */}
-
               <Link href="/wishlist" className="relative" aria-label="Wishlist">
                 <FiHeart size={18} />
                 {productIds.length > 0 && (
@@ -151,6 +157,14 @@ export default function Navbar() {
                   </span>
                 )}
               </Link>
+
+              {/* <button
+                onClick={() => setShowOrderTracking(true)}
+                aria-label="Track Order"
+                className="relative"
+              >
+                <FiPackage size={18} />
+              </button> */}
 
               <Link href="/cart" className="relative" aria-label="Cart">
                 <FiShoppingCart size={18} />
@@ -163,6 +177,9 @@ export default function Navbar() {
 
               {user ? (
                 <>
+                  <Link href="/orders" aria-label="My Orders">
+                    <FiPackage size={18} />
+                  </Link>
                   <Link href="/profile" aria-label="Account">
                     <FiUser size={18} />
                   </Link>
@@ -171,9 +188,6 @@ export default function Navbar() {
                       <FiSettings size={18} />
                     </Link>
                   )}
-                  {/* <button onClick={handleLogout} aria-label="Logout">
-                    <FiX size={22} />
-                  </button> */}
                 </>
               ) : (
                 <Link href="/login" aria-label="Login">
@@ -186,10 +200,15 @@ export default function Navbar() {
           <div className="flex justify-center py-2">
             <p className="text-sm text-gray-500">Get discount on sling bags</p>
           </div>
-
-          
         </div>
       </div>
+
+      {/* Order Tracking Modal */}
+      {showOrderTracking && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <OrderTracking onClose={() => setShowOrderTracking(false)} />
+        </div>
+      )}
     </nav>
   );
 }

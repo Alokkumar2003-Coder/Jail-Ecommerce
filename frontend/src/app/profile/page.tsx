@@ -5,6 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { logout } from '../../redux/authSlice';
 import { useRouter } from 'next/navigation';
 import api from '../../utils/axios';
+import ProtectedRoute from '../../components/ProtectedRoute';
 
 interface User {
   id: number;
@@ -12,6 +13,14 @@ interface User {
   email: string;
   role: string;
   avatar: string | null;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
+  dateOfBirth?: string;
+  gender?: string;
   createdAt: string;
 }
 
@@ -31,29 +40,46 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: '',
+    dateOfBirth: '',
+    gender: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
 
   useEffect(() => {
-    if (!authUser) {
-      router.push('/login');
-      return;
+    if (authUser) {
+      fetchUserProfile();
     }
-
-    fetchUserProfile();
-  }, [authUser, router]);
+  }, [authUser]);
 
   const fetchUserProfile = async () => {
     try {
       console.log('Fetching user profile...');
-      const response = await api.get('/users/me');
+      // Use the correct endpoint that matches the backend
+      const response = await api.get('/auth/me');
       console.log('Profile response:', response.data);
-      setUser(response.data);
+      
+      // Handle the response format from auth/me endpoint
+      const userData = response.data.user;
+      setUser(userData);
       setFormData({
-        name: response.data.name,
-        email: response.data.email,
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone || '',
+        address: userData.address || '',
+        city: userData.city || '',
+        state: userData.state || '',
+        zipCode: userData.zipCode || '',
+        country: userData.country || '',
+        dateOfBirth: userData.dateOfBirth || '',
+        gender: userData.gender || '',
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
@@ -104,6 +130,14 @@ export default function ProfilePage() {
       const updateData: any = {
         name: formData.name,
         email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        country: formData.country,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender,
       };
 
       if (formData.newPassword) {
@@ -151,204 +185,332 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center">User not found</div>
+        <div className="text-center">
+          <p className="text-red-600 mb-4">User not found</p>
+          <button
+            onClick={() => router.push('/login')}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+          >
+            Go to Login
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold">Profile</h1>
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
-            >
-              Logout
-            </button>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-              {error}
-            </div>
-          )}
-
-          {/* Avatar Section */}
-          <div className="text-center mb-8">
-            <div className="relative inline-block">
-              <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 mx-auto mb-4">
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 text-4xl">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-                {uploadingAvatar ? 'Uploading...' : 'Change Avatar'}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarUpload}
-                  className="hidden"
-                  disabled={uploadingAvatar}
-                />
-              </label>
-            </div>
-          </div>
-
-          {/* Profile Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full border p-3 rounded"
-                  disabled={!editMode}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full border p-3 rounded"
-                  disabled={!editMode}
-                  required
-                />
-              </div>
+    <ProtectedRoute requireAuth={true}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-3xl font-bold">Profile</h1>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+              >
+                Logout
+              </button>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Role
-              </label>
-              <input
-                type="text"
-                value={user.role}
-                className="w-full border p-3 rounded bg-gray-100"
-                disabled
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Member Since
-              </label>
-              <input
-                type="text"
-                value={new Date(user.createdAt).toLocaleDateString()}
-                className="w-full border p-3 rounded bg-gray-100"
-                disabled
-              />
-            </div>
-
-            {/* Password Change Section */}
-            {editMode && (
-              <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold mb-4">Change Password</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Current Password
-                    </label>
-                    <input
-                      type="password"
-                      value={formData.currentPassword}
-                      onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                      className="w-full border p-3 rounded"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      New Password
-                    </label>
-                    <input
-                      type="password"
-                      value={formData.newPassword}
-                      onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                      className="w-full border p-3 rounded"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Confirm New Password
-                    </label>
-                    <input
-                      type="password"
-                      value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full border p-3 rounded"
-                    />
-                  </div>
-                </div>
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                {error}
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex space-x-4 pt-6">
-              {editMode ? (
-                <>
-                  <button
-                    type="submit"
-                    disabled={updating}
-                    className="flex-1 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+            {/* Avatar Section */}
+            <div className="text-center mb-8">
+              <div className="relative inline-block">
+                <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 mx-auto mb-4">
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-4xl">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                  {uploadingAvatar ? 'Uploading...' : 'Change Avatar'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    className="hidden"
+                    disabled={uploadingAvatar}
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Profile Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Gender
+                  </label>
+                  <select
+                    value={formData.gender}
+                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
                   >
-                    {updating ? 'Updating...' : 'Save Changes'}
-                  </button>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date of Birth
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.dateOfBirth}
+                    onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Country
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.country}
+                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Address
+                </label>
+                <textarea
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full border p-3 rounded"
+                  disabled={!editMode}
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    State/Province
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.state}
+                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ZIP/Postal Code
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.zipCode}
+                    onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
+                    className="w-full border p-3 rounded"
+                    disabled={!editMode}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Role
+                </label>
+                <input
+                  type="text"
+                  value={user.role}
+                  className="w-full border p-3 rounded bg-gray-100"
+                  disabled
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Member Since
+                </label>
+                <input
+                  type="text"
+                  value={new Date(user.createdAt).toLocaleDateString()}
+                  className="w-full border p-3 rounded bg-gray-100"
+                  disabled
+                />
+              </div>
+
+              {/* Password Change Section */}
+              {editMode && (
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4">Change Password</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Current Password
+                      </label>
+                      <input
+                        type="password"
+                        value={formData.currentPassword}
+                        onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
+                        className="w-full border p-3 rounded"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={formData.newPassword}
+                        onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                        className="w-full border p-3 rounded"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type="password"
+                        value={formData.confirmPassword}
+                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                        className="w-full border p-3 rounded"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex space-x-4 pt-6">
+                {editMode ? (
+                  <>
+                    <button
+                      type="submit"
+                      disabled={updating}
+                      className="flex-1 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    >
+                      {updating ? 'Updating...' : 'Save Changes'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditMode(false);
+                        setError(null);
+                        // Reset form data
+                        setFormData({
+                          name: user.name,
+                          email: user.email,
+                          phone: user.phone || '',
+                          address: user.address || '',
+                          city: user.city || '',
+                          state: user.state || '',
+                          zipCode: user.zipCode || '',
+                          country: user.country || '',
+                          dateOfBirth: user.dateOfBirth || '',
+                          gender: user.gender || '',
+                          currentPassword: '',
+                          newPassword: '',
+                          confirmPassword: '',
+                        });
+                      }}
+                      className="flex-1 bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
                   <button
                     type="button"
-                    onClick={() => {
-                      setEditMode(false);
-                      setError(null);
-                      // Reset form data
-                      setFormData({
-                        name: user.name,
-                        email: user.email,
-                        currentPassword: '',
-                        newPassword: '',
-                        confirmPassword: '',
-                      });
-                    }}
-                    className="flex-1 bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400 transition-colors"
+                    onClick={() => setEditMode(true)}
+                    className="flex-1 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors"
                   >
-                    Cancel
+                    Edit Profile
                   </button>
-                </>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setEditMode(true)}
-                  className="flex-1 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors"
-                >
-                  Edit Profile
-                </button>
-              )}
-            </div>
-          </form>
+                )}
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

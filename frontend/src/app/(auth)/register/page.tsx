@@ -24,13 +24,13 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#294B69] py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 p-8 bg-[#16273B] rounded-3xl shadow-xl">
+    <div className="min-h-screen flex items-center justify-center bg-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-3xl shadow-xl">
         <div className="text-center">
-          <h2 className="text-4xl font-extrabold text-[#DBE9FA]">
+          <h2 className="text-4xl font-extrabold text-red-800">
             Create an Account
           </h2>
-          <p className="mt-2 text-md text-[#DBE9FA]">
+          <p className="mt-2 text-md text-red-700">
             Get started for free
           </p>
         </div>
@@ -38,13 +38,13 @@ export default function RegisterPage() {
           <button
             type="button"
             onClick={handleGoogleRegister}
-            className="group relative w-full flex justify-center py-3 px-4 border-2 border-[#5497D4] text-lg font-medium rounded-full text-[#5497D4] hover:bg-[#5497D4] hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 ease-in-out"
+            className="group relative cursor-pointer w-full flex justify-center py-3 px-4 border-2 border-red-500 text-lg font-medium rounded-full text-red-500 hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 ease-in-out"
           >
             Sign up with Google
           </button>
           <div className="flex items-center justify-center space-x-2 text-white opacity-70">
             <hr className="flex-grow border-t border-gray-400 opacity-50" />
-            <span className="text-sm">OR SIGN UP WITH</span>
+            <span className="text-sm text-red-500">OR SIGN UP WITH</span>
             <hr className="flex-grow border-t border-gray-400 opacity-50" />
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function RegisterPage() {
                 {...formRegister('name')}
                 type="text"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border-2 border-transparent placeholder-[#B9C4D3] text-[#DBE9FA] rounded-xl bg-[#203750] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 ease-in-out"
+                className="appearance-none relative block w-full px-4 py-3 border-1 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 ease-in-out"
                 placeholder="Full Name *"
               />
             </div>
@@ -64,7 +64,7 @@ export default function RegisterPage() {
                 {...formRegister('email')}
                 type="email"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border-2 border-transparent placeholder-[#B9C4D3] text-[#DBE9FA] rounded-xl bg-[#203750] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 ease-in-out"
+                className="appearance-none relative block w-full px-4 py-3 border-1 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 ease-in-out"
                 placeholder="Email address *"
               />
             </div>
@@ -73,7 +73,7 @@ export default function RegisterPage() {
                 {...formRegister('password')}
                 type="password"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border-2 border-transparent placeholder-[#B9C4D3] text-[#DBE9FA] rounded-xl bg-[#203750] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 ease-in-out"
+                className="appearance-none relative block w-full px-4 py-3 border-1 rounded-xl  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 ease-in-out"
                 placeholder="Password *"
               />
             </div>
@@ -87,16 +87,16 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 text-lg font-bold rounded-xl text-white bg-[#5497D4] hover:bg-[#3C73A7] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 ease-in-out"
+              className="group cursor-pointer relative w-full flex justify-center py-3 px-4 text-lg font-bold rounded-xl text-white bg-red-500 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 ease-in-out"
             >
               {loading ? 'Creating account...' : 'Sign Up'}
             </button>
           </div>
         </form>
 
-        <div className="text-center text-sm text-[#B9C4D3] pt-4">
+        <div className="text-center text-sm text-black">
           Already have an account?{' '}
-          <Link href="/login" className="text-[#5497D4] hover:underline font-medium">
+          <Link href="/login" className="text-blue-500 hover:underline font-medium">
             Sign in
           </Link>
         </div>

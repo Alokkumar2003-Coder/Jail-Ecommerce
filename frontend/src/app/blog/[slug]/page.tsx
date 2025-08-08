@@ -47,7 +47,7 @@ export default function BlogDetailPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {blog.coverImage && (
-        <img src={blog.coverImage} alt={blog.title} className="w-full h-96 object-cover rounded-lg mb-6" />
+        <img src={blog.coverImage} alt={blog.title} className="w-full h-full object-cover rounded-lg mb-6" />
       )}
       <h1 className="text-3xl font-bold mb-2">{blog.title}</h1>
       <div className="text-gray-500 mb-6">

@@ -67,7 +67,7 @@ export const deleteUser = async (req, res) => {
 export const getCurrentUser = async (req, res) => {
   try {
     const user = await db.User.findByPk(req.user.id, {
-      attributes: ['id', 'name', 'email', 'role', 'avatar', 'createdAt'],
+      attributes: ['id', 'name', 'email', 'role', 'avatar', 'phone', 'address', 'city', 'state', 'zipCode', 'country', 'dateOfBirth', 'gender', 'createdAt'],
     });
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
@@ -79,7 +79,21 @@ export const getCurrentUser = async (req, res) => {
 // Update current user profile
 export const updateProfile = async (req, res) => {
   try {
-    const { name, email, currentPassword, newPassword } = req.body;
+    const { 
+      name, 
+      email, 
+      currentPassword, 
+      newPassword, 
+      phone, 
+      address, 
+      city, 
+      state, 
+      zipCode, 
+      country, 
+      dateOfBirth, 
+      gender 
+    } = req.body;
+    
     const user = await db.User.findByPk(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -92,9 +106,16 @@ export const updateProfile = async (req, res) => {
       user.email = email;
     }
 
-    if (name) {
-      user.name = name;
-    }
+    // Update basic info
+    if (name) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+    if (address !== undefined) user.address = address;
+    if (city !== undefined) user.city = city;
+    if (state !== undefined) user.state = state;
+    if (zipCode !== undefined) user.zipCode = zipCode;
+    if (country !== undefined) user.country = country;
+    if (dateOfBirth !== undefined) user.dateOfBirth = dateOfBirth;
+    if (gender !== undefined) user.gender = gender;
 
     // Handle password change
     if (newPassword) {
@@ -120,6 +141,14 @@ export const updateProfile = async (req, res) => {
       email: user.email,
       role: user.role,
       avatar: user.avatar,
+      phone: user.phone,
+      address: user.address,
+      city: user.city,
+      state: user.state,
+      zipCode: user.zipCode,
+      country: user.country,
+      dateOfBirth: user.dateOfBirth,
+      gender: user.gender,
       createdAt: user.createdAt,
     };
     

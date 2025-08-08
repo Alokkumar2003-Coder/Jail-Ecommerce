@@ -5,7 +5,8 @@ import { authorizeRoles } from '../middleware/roles.js';
 
 const router = express.Router();
 
-router.get('/', authenticate, orderController.getOrders);
+router.get('/', authenticate, orderController.getUserOrders);
+router.get('/all', authenticate, authorizeRoles('admin'), orderController.getAllOrders);
 router.get('/:id', authenticate, orderController.getOrder);
 router.post('/', authenticate, orderController.createOrder);
 router.put('/:id', authenticate, authorizeRoles('admin'), orderController.updateOrderStatus);
