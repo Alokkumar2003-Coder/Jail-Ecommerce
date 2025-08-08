@@ -32,17 +32,19 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Carousel/>
+    <div className=" mx-auto w-full">
+      <div className="w-full">
+        <Carousel/>
+      </div>
       {/* Hero Section */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+      {/* <div className="text-center mb-12"> */}
+        {/* <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Welcome to Your ECommerce Store
         </h1>
         <p className="text-xl text-gray-600 mb-8">
           Discover amazing products at great prices
-        </p>
-        <div className="space-x-4">
+        </p> */}
+        {/* <div className="space-x-4">
           <Link
             href="/products"
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
@@ -56,10 +58,10 @@ export default function Home() {
             Sign In
           </Link>
         </div>
-      </div>
+      </div> */}
 
       {/* Categories Section */}
-      <div className="mb-12">
+      <div className="mb-8 mt-8 flex flex-col">
         <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
           Shop by Category
         </h2>
@@ -70,7 +72,7 @@ export default function Home() {
             <p className="mt-2 text-gray-600">Loading categories...</p>
           </div>
         ) : categories.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 w-full ">
   {categories.map((category) => (
     <div key={category.id} className="flex justify-center items-center">
       <Link
