@@ -3,7 +3,7 @@ import { Providers } from './providers';
 import Navbar from '../components/Navbar';
 
 export const metadata = {
-  title: 'ECommerce Store',
+  title: 'Jail E-commerce',
   description: 'Your one-stop shop for everything you need',
 };
 

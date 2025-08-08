@@ -33,16 +33,20 @@ export default function ReviewForm({ productId, onReviewSubmitted }: ReviewFormP
     setError('');
 
     try {
-      await api.post('/reviews', {
+      console.log('Submitting review:', { productId, rating, comment });
+      const response = await api.post('/reviews', {
         productId,
         rating,
         comment: comment.trim(),
       });
       
+      console.log('Review submitted successfully:', response.data);
+      
       setComment('');
       setRating(5);
       onReviewSubmitted();
     } catch (err: any) {
+      console.error('Error submitting review:', err);
       setError(err.response?.data?.message || 'Failed to submit review');
     } finally {
       setLoading(false);

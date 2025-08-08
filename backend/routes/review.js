@@ -4,6 +4,8 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
+router.get('/product/:productId', reviewController.getProductReviews);
+router.get('/all', reviewController.getAllReviews); // For debugging
 router.post('/', authenticate, reviewController.addReview);
 router.put('/:id', authenticate, reviewController.editReview);
 router.delete('/:id', authenticate, reviewController.deleteReview);

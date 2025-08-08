@@ -19,6 +19,17 @@ export default function NewProductPage() {
   const [images, setImages] = useState<string[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  // Specifications
+  const [brand, setBrand] = useState('');
+  const [model, setModel] = useState('');
+  const [weight, setWeight] = useState('');
+  const [dimensions, setDimensions] = useState('');
+  const [color, setColor] = useState('');
+  const [material, setMaterial] = useState('');
+  const [warranty, setWarranty] = useState('');
+  const [customSpecs, setCustomSpecs] = useState<Array<{key: string, value: string}>>([]);
+  
   const router = useRouter();
 
   useState(() => {
@@ -45,11 +56,33 @@ export default function NewProductPage() {
     setImages(images.filter((_, i) => i !== index));
   };
 
+  const addCustomSpec = () => {
+    setCustomSpecs([...customSpecs, { key: '', value: '' }]);
+  };
+
+  const removeCustomSpec = (index: number) => {
+    setCustomSpecs(customSpecs.filter((_, i) => i !== index));
+  };
+
+  const updateCustomSpec = (index: number, field: 'key' | 'value', value: string) => {
+    const updated = [...customSpecs];
+    updated[index][field] = value;
+    setCustomSpecs(updated);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
     try {
+      // Convert custom specs to object
+      const specifications = customSpecs.reduce((acc, spec) => {
+        if (spec.key && spec.value) {
+          acc[spec.key] = spec.value;
+        }
+        return acc;
+      }, {} as Record<string, string>);
+
       await api.post('/products', {
         title,
         description,
@@ -58,6 +91,14 @@ export default function NewProductPage() {
         stock: parseInt(stock),
         categoryId: parseInt(categoryId),
         images,
+        brand: brand || null,
+        model: model || null,
+        weight: weight || null,
+        dimensions: dimensions || null,
+        color: color || null,
+        material: material || null,
+        warranty: warranty || null,
+        specifications: Object.keys(specifications).length > 0 ? specifications : null,
       });
       router.push('/admin/products');
     } catch (err: any) {
@@ -68,10 +109,10 @@ export default function NewProductPage() {
   };
 
   return (
-    <div>
+    <div className='w-full'>
       <h1 className="text-3xl font-bold mb-6">Add New Product</h1>
       
-      <form onSubmit={handleSubmit} className="max-w-2xl">
+      <form onSubmit={handleSubmit} className="w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -160,6 +201,139 @@ export default function NewProductPage() {
               ))}
             </select>
           </div>
+
+          {/* Specifications */}
+          <div className="md:col-span-2">
+            <h3 className="text-lg font-semibold mb-4">Product Specifications</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Brand
+                </label>
+                <input
+                  type="text"
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="w-full border p-3 rounded"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Model
+                </label>
+                <input
+                  type="text"
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  className="w-full border p-3 rounded"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Weight
+                </label>
+                <input
+                  type="text"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  className="w-full border p-3 rounded"
+                  placeholder="e.g., 2.5 kg"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Dimensions
+                </label>
+                <input
+                  type="text"
+                  value={dimensions}
+                  onChange={(e) => setDimensions(e.target.value)}
+                  className="w-full border p-3 rounded"
+                  placeholder="e.g., 10 x 5 x 2 inches"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Color
+                </label>
+                <input
+                  type="text"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="w-full border p-3 rounded"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Material
+                </label>
+                <input
+                  type="text"
+                  value={material}
+                  onChange={(e) => setMaterial(e.target.value)}
+                  className="w-full border p-3 rounded"
+                />
+              </div>
+              
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Warranty
+                </label>
+                <input
+                  type="text"
+                  value={warranty}
+                  onChange={(e) => setWarranty(e.target.value)}
+                  className="w-full border p-3 rounded"
+                  placeholder="e.g., 1 year manufacturer warranty"
+                />
+              </div>
+            </div>
+
+            {/* Custom Specifications */}
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-md font-medium">Custom Specifications</h4>
+                <button
+                  type="button"
+                  onClick={addCustomSpec}
+                  className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                >
+                  Add Spec
+                </button>
+              </div>
+              
+              {customSpecs.map((spec, index) => (
+                <div key={index} className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={spec.key}
+                    onChange={(e) => updateCustomSpec(index, 'key', e.target.value)}
+                    className="flex-1 border p-2 rounded"
+                    placeholder="Specification name"
+                  />
+                  <input
+                    type="text"
+                    value={spec.value}
+                    onChange={(e) => updateCustomSpec(index, 'value', e.target.value)}
+                    className="flex-1 border p-2 rounded"
+                    placeholder="Specification value"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeCustomSpec(index)}
+                    className="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
           
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -183,7 +357,7 @@ export default function NewProductPage() {
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
+                      className="absolute cursor-pointer top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
                     >
                       ×
                     </button>
@@ -198,14 +372,14 @@ export default function NewProductPage() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="bg-blue-600 cursor-pointer w-full text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
             {loading ? 'Creating...' : 'Create Product'}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400 transition-colors"
+            className="bg-gray-300 w-full cursor-pointer text-gray-700 px-6 py-2 rounded hover:bg-gray-400 transition-colors"
           >
             Cancel
           </button>

@@ -8,42 +8,63 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Link
           href="/admin/products"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+          className="bg-blue-500 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
-          <h2 className="text-xl font-semibold mb-2">Manage Products</h2>
+          <h2 className="text-xl font-semibold mb-2 text-white">Manage Products</h2>
           <p className="text-gray-600">Add, edit, and delete products</p>
         </Link>
         
         <Link
           href="/admin/categories"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+          className=" p-6 bg-green-500 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
-          <h2 className="text-xl font-semibold mb-2">Manage Categories</h2>
+          <h2 className="text-xl font-semibold mb-2 text-white">Manage Categories</h2>
           <p className="text-gray-600">Organize products by categories</p>
         </Link>
         
         <Link
           href="/admin/orders"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+          className="bg-red-500 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
-          <h2 className="text-xl font-semibold mb-2">Manage Orders</h2>
+          <h2 className="text-xl font-semibold mb-2 text-white">Manage Orders</h2>
           <p className="text-gray-600">View and update order status</p>
         </Link>
         
         <Link
           href="/admin/users"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+          className="bg-yellow-500 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
-          <h2 className="text-xl font-semibold mb-2">Manage Users</h2>
+          <h2 className="text-xl font-semibold mb-2 text-white">Manage Users</h2>
           <p className="text-gray-600">View user accounts and roles</p>
         </Link>
         
         <Link
           href="/admin/analytics"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+          className="bg-purple-500 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
         >
-          <h2 className="text-xl font-semibold mb-2">Analytics</h2>
+          <h2 className="text-xl font-semibold mb-2 text-white">Analytics</h2>
           <p className="text-gray-600">View sales reports and insights</p>
+        </Link>
+         <Link
+          href="/admin/blogs"
+          className="bg-gray-500 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
+          <h2 className="text-xl font-semibold mb-2 text-white">Blogs</h2>
+          <p className="text-gray-600">Add, Edit and Delete Blogs</p>
+        </Link>
+        <Link
+          href="/admin/carousel"
+          className="bg-emerald-500 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
+          <h2 className="text-xl font-semibold mb-2 text-white">Carousel</h2>
+          <p className="text-gray-600">Add, Edit and Delete Carousel Items</p>
+        </Link>
+        <Link
+          href="/admin/carousel"
+          className="bg-orange-500 p-6 rounded-lg shadow hover:shadow-lg transition-shadow"
+        >
+          <h2 className="text-xl font-semibold mb-2 text-white">News</h2>
+          <p className="text-gray-600">Add, Edit and Delete Carousel Items</p>
         </Link>
       </div>
     </div>

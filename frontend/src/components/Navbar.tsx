@@ -27,6 +27,10 @@ export default function Navbar() {
               Products
             </Link>
             
+            <Link href="/blog" className="text-gray-700 hover:text-gray-900">
+              Blog
+            </Link>
+            
             <Link href="/cart" className="text-gray-700 hover:text-gray-900 relative">
               Cart
               {items.length > 0 && (
@@ -54,6 +58,9 @@ export default function Navbar() {
                 )}
                 <Link href="/orders" className="text-gray-700 hover:text-gray-900">
                   Orders
+                </Link>
+                <Link href="/profile" className="text-gray-700 hover:text-gray-900">
+                  Profile
                 </Link>
                 <button
                   onClick={handleLogout}

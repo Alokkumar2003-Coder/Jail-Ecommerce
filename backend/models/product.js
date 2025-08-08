@@ -14,6 +14,15 @@ Product.init(
     stock: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     rating: { type: DataTypes.FLOAT, defaultValue: 0 },
     categoryId: { type: DataTypes.INTEGER, allowNull: false },
+    // Product specifications
+    brand: { type: DataTypes.STRING, allowNull: true },
+    model: { type: DataTypes.STRING, allowNull: true },
+    weight: { type: DataTypes.STRING, allowNull: true },
+    dimensions: { type: DataTypes.STRING, allowNull: true },
+    color: { type: DataTypes.STRING, allowNull: true },
+    material: { type: DataTypes.STRING, allowNull: true },
+    warranty: { type: DataTypes.STRING, allowNull: true },
+    specifications: { type: DataTypes.JSON, allowNull: true }, // For additional custom specs
   },
   { sequelize, modelName: 'Product', timestamps: true }
 );
