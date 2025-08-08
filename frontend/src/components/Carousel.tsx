@@ -86,13 +86,13 @@ export default function Carousel() {
   }
 
   return (
-    <div className="relative w-full h-64 md:h-96 overflow-hidden">
+    <div className="w-full relative h-96">
       {/* Carousel Images */}
-      <div className="relative w-full h-full">
+      <div className=" w-full h-full relative">
         {carouselItems.map((item, index) => (
           <div
             key={item.id}
-            className={`absolute inset-0 transition-opacity duration-500 ${
+            className={`h-full w-full absolute inset-0 transition-opacity duration-500 ${
               index === currentIndex ? 'opacity-100' : 'opacity-0'
             }`}
           >

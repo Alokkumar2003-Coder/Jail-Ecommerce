@@ -168,79 +168,80 @@ export default function Home() {
         <Carousel />
       </div>
 
-      {/* Categories Section (Shop By Categories) */}
-      <div className="mb-8 mt-4 flex flex-col">
-        <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">
-          SHOP BY CATEGORIES
-        </h2>
+     {/* Categories Section (Shop By Categories) */}
+<div className="mb-10 mt-10 flex flex-col">
+  <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 text-center">
+    SHOP BY CATEGORIES
+  </h2>
 
-        {loading ? (
-          <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-gray-600">Loading categories...</p>
-          </div>
-        ) : categories.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 w-full">
-            {categories.map((category) => (
-              <div key={category.id} className="flex justify-center items-center">
-                <Link
-                  href={`/categories/${category.id}`}
-                  className="group relative w-20 h-20 rounded-full overflow-hidden shadow-lg hover:shadow-xl transition duration-300 flex items-center justify-center"
-                >
-                  {category.image ? (
-                    <Image
-                      src={category.image}
-                      alt={category.name}
-                      width={80} // Explicit width and height are recommended for better performance
-                      height={80} // This matches the parent's w-20 h-20 (80px x 80px)
-                      className="object-cover rounded-full group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center rounded-full">
-                      <svg
-                        className="w-12 h-12 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                        />
-                      </svg>
-                    </div>
-                  )}
-
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 group-hover:bg-opacity-50 transition">
-                    <h3 className="text-white text-lg font-semibold text-center px-2">
-                      {category.name}
-                    </h3>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <svg
-              className="w-16 h-16 mx-auto text-gray-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+  {loading ? (
+    <div className="text-center py-8">
+      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <p className="mt-2 text-gray-600">Loading categories...</p>
+    </div>
+  ) : categories.length > 0 ? (
+    <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6 sm:gap-8 px-4 sm:px-6 md:px-10">
+      {categories.map((category) => (
+        <div
+          key={category.id}
+          className="flex flex-col justify-center items-center space-y-2"
+        >
+          <Link
+            href={`/categories/${category.id}`}
+            className="group relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full overflow-hidden shadow-lg hover:shadow-xl transition duration-300 flex items-center justify-center"
+          >
+            {category.image ? (
+              <img
+                src={category.image}
+                alt={category.name}
+                width={112}
+                height={112}
+                className="object-cover w-full h-full rounded-full group-hover:scale-105 transition-transform duration-300"
               />
-            </svg>
-            <p className="text-gray-600">No categories available yet.</p>
-          </div>
-        )}
-      </div>
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center rounded-full">
+                <svg
+                  className="w-10 h-10 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
+                </svg>
+              </div>
+            )}
+          </Link>
+          <h3 className="text-center text-sm sm:text-base font-medium text-gray-800">
+            {category.name}
+          </h3>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div className="text-center py-8">
+      <svg
+        className="w-16 h-16 mx-auto text-gray-300"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+        />
+      </svg>
+      <p className="text-gray-600">No categories available yet.</p>
+    </div>
+  )}
+</div>
+
 
       {/* Feature Cards Section */}
       <div className="mb-12 mt-8 px-4 md:px-0">

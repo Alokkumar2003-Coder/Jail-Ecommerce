@@ -7,6 +7,14 @@ interface User {
   email: string;
   role: string;
   avatar?: string | null;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
+  dateOfBirth?: string;
+  gender?: string;
 }
 
 interface AuthState {
@@ -30,9 +38,12 @@ export const login = createAsyncThunk(
   'auth/login',
   async (data: { email: string; password: string }, { rejectWithValue }) => {
     try {
+      console.log('Attempting login...');
       const res = await api.post('/auth/login', data);
+      console.log('Login response:', res.data);
       return res.data;
     } catch (err: any) {
+      console.error('Login error:', err);
       return rejectWithValue(err.response?.data?.message || 'Login failed');
     }
   }
@@ -42,9 +53,12 @@ export const register = createAsyncThunk(
   'auth/register',
   async (data: { name: string; email: string; password: string }, { rejectWithValue }) => {
     try {
+      console.log('Attempting registration...');
       const res = await api.post('/auth/register', data);
+      console.log('Register response:', res.data);
       return res.data;
     } catch (err: any) {
+      console.error('Register error:', err);
       return rejectWithValue(err.response?.data?.message || 'Registration failed');
     }
   }
@@ -55,12 +69,17 @@ export const checkAuth = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
+      console.log('Checking auth with token:', token ? 'exists' : 'not found');
+      
       if (!token) {
         throw new Error('No token found');
       }
+      
       const res = await api.get('/auth/me');
+      console.log('Check auth response:', res.data);
       return res.data;
     } catch (err: any) {
+      console.error('Check auth error:', err);
       localStorage.removeItem('token');
       return rejectWithValue('Authentication failed');
     }
@@ -97,6 +116,9 @@ const authSlice = createSlice({
         state.user.avatar = action.payload;
       }
     },
+    clearError(state) {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -109,10 +131,12 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         localStorage.setItem('token', action.payload.token);
+        console.log('Login successful, user:', action.payload.user);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+        console.log('Login failed:', action.payload);
       })
       .addCase(register.pending, (state) => {
         state.loading = true;
@@ -123,10 +147,12 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         localStorage.setItem('token', action.payload.token);
+        console.log('Registration successful, user:', action.payload.user);
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+        console.log('Registration failed:', action.payload);
       })
       .addCase(checkAuth.pending, (state) => {
         state.loading = true;
@@ -136,11 +162,13 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = localStorage.getItem('token');
+        console.log('Auth check successful, user:', action.payload.user);
       })
       .addCase(checkAuth.rejected, (state) => {
         state.loading = false;
         state.user = null;
         state.token = null;
+        console.log('Auth check failed');
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -148,5 +176,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setAuth, updateUserAvatar } = authSlice.actions;
+export const { logout, setAuth, updateUserAvatar, clearError } = authSlice.actions;
 export default authSlice.reducer;

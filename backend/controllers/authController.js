@@ -13,6 +13,7 @@ export const register = async (req, res) => {
     const token = generateToken(user);
     res.status(201).json({ user: { id: user.id, name: user.name, email: user.email, role: user.role }, token });
   } catch (err) {
+    console.error('Registration error:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -29,6 +30,7 @@ export const login = async (req, res) => {
     const token = generateToken(user);
     res.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role }, token });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -39,9 +41,26 @@ export const logout = (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    const user = await db.User.findByPk(req.user.id, { attributes: { exclude: ['password'] } });
-    res.json({ user });
+    console.log('Getting user with ID:', req.user.id);
+    
+    // First check if the user exists
+    const user = await db.User.findByPk(req.user.id);
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Get user with all attributes except password
+    const userData = await db.User.findByPk(req.user.id, { 
+      attributes: { 
+        exclude: ['password'] 
+      }
+    });
+
+    console.log('User data retrieved successfully');
+    res.json({ user: userData });
   } catch (err) {
+    console.error('getMe error:', err);
     res.status(500).json({ message: err.message });
   }
 };

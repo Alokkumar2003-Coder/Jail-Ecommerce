@@ -2,16 +2,38 @@
 
 import { useState } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useAppSelector } from '../../redux/hooks';
 import api from '../../utils/axios';
 
 interface StripeCheckoutFormProps {
   amount: number;
   onSuccess: () => void;
+  customerDetails: {
+    name: string;
+    email: string;
+    phone: string;
+    shippingPhone: string;
+  };
+  shippingAddress: {
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  orderNotes: string;
 }
 
-export default function StripeCheckoutForm({ amount, onSuccess }: StripeCheckoutFormProps) {
+export default function StripeCheckoutForm({ 
+  amount, 
+  onSuccess, 
+  customerDetails, 
+  shippingAddress, 
+  orderNotes 
+}: StripeCheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
+  const { items } = useAppSelector((state) => state.cart);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -37,7 +59,31 @@ export default function StripeCheckoutForm({ amount, onSuccess }: StripeCheckout
       if (result.error) {
         setError(result.error.message || 'Payment failed');
       } else if (result.paymentIntent?.status === 'succeeded') {
-        onSuccess();
+        // Create order after successful payment
+        try {
+          const orderData = {
+            items: items.map(item => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: item.price,
+            })),
+            shippingAddress: shippingAddress,
+            totalPrice: amount,
+            paymentMethod: 'online',
+            paymentStatus: 'paid',
+            customerName: customerDetails.name,
+            customerEmail: customerDetails.email,
+            customerPhone: customerDetails.phone,
+            shippingPhone: customerDetails.shippingPhone || customerDetails.phone,
+            orderNotes: orderNotes || null,
+          };
+
+          await api.post('/orders', orderData);
+          onSuccess();
+        } catch (orderError) {
+          console.error('Error creating order:', orderError);
+          setError('Payment successful but order creation failed. Please contact support.');
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Payment failed');
@@ -72,7 +118,7 @@ export default function StripeCheckoutForm({ amount, onSuccess }: StripeCheckout
         disabled={loading || !stripe}
         className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
       >
-        {loading ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
+        {loading ? 'Processing...' : `Pay ₹${amount.toFixed(2)}`}
       </button>
       
       {error && (
