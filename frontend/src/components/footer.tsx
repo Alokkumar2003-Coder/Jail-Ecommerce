@@ -1,7 +1,47 @@
 import React from 'react';
 import Link from 'next/link';
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaLinkedinIn,
+  FaPinterestP,
+} from 'react-icons/fa';
 
 const Footer = () => {
+  const socialMedia = [
+    {
+      name: 'Facebook',
+      url: 'https://www.facebook.com/jail.luxury',
+      bg: 'bg-blue-600',
+      icon: <FaFacebookF className="text-white text-sm" />,
+    },
+    {
+      name: 'Instagram',
+      url: 'https://www.instagram.com/jail.luxury',
+      bg: 'bg-[#E4405F]',
+      icon: <FaInstagram className="text-white text-sm" />,
+    },
+    {
+      name: 'Twitter',
+      url: 'https://x.com/jailluxury',
+      bg: 'bg-[#1DA1F2]',
+      icon: <FaTwitter className="text-white text-sm" />,
+    },
+    {
+      name: 'LinkedIn',
+      url: 'https://www.linkedin.com/company/jail-luxury/',
+      bg: 'bg-[#0077B5]',
+      icon: <FaLinkedinIn className="text-white text-sm" />,
+    },
+    {
+      name: 'Pinterest',
+      url: 'https://pin.it/35X2dFOen',
+      bg: 'bg-[#E60023]',
+      icon: <FaPinterestP className="text-white text-sm" />,
+    },
+  ];
+
   return (
     <footer className="bg-[#f2efe9] text-[#2c2c2c] py-16 px-6 sm:px-10 md:px-16 lg:px-24 font-serif">
       <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-x-8 gap-y-12">
@@ -24,11 +64,11 @@ const Footer = () => {
         <div className="lg:border-l-2 lg:pl-6 text-left sm:text-left md:text-center lg:text-left">
           <h3 className="text-lg font-bold mb-4">HELP</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/terms" className="hover:underline">Terms and Conditions</Link></li>
-            <li><Link href="/privacy" className="hover:underline">Privacy Policy</Link></li>
-            <li><Link href="/returns" className="hover:underline">Returns and Refunds Policy</Link></li>
-            <li><Link href="/shipping" className="hover:underline">Shipping Policy</Link></li>
-            <li><Link href="/cancellation" className="hover:underline">Cancellation Policy</Link></li>
+            <li><Link href="/termcondition" className="hover:underline">Terms and Conditions</Link></li>
+            <li><Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link></li>
+            <li><Link href="/returnrefund" className="hover:underline">Returns and Refunds Policy</Link></li>
+            <li><Link href="/shippingpolicy" className="hover:underline">Shipping Policy</Link></li>
+            <li><Link href="/deletepolicy" className="hover:underline">Cancellation Policy</Link></li>
           </ul>
         </div>
 
@@ -45,7 +85,7 @@ const Footer = () => {
 
         {/* Shop Products */}
         <div className="lg:border-l-2 lg:pl-6 text-left sm:text-left md:text-center lg:text-left">
-          <h3 className="text-lg font-bold mb-4">SHOP PRODUCTS</h3>
+          <h3 className="text-lg font-bold mb-4">SHOPING</h3>
           <ul className="space-y-2 text-sm">
             <li><Link href="/products/bags" className="hover:underline">Bags</Link></li>
             <li><Link href="/products/belts" className="hover:underline">Belts</Link></li>
@@ -62,21 +102,19 @@ const Footer = () => {
         <div className="lg:border-l-2 lg:pl-6 text-left sm:text-left md:text-center lg:text-left">
           <h3 className="text-lg font-bold mb-4">SOCIAL MEDIA</h3>
           <ul className="flex flex-col items-start sm:items-start md:items-center lg:items-start space-y-3">
-            {[
-              { bg: 'bg-blue-600' },
-              { bg: 'bg-[#E4405F]' },
-              { bg: 'bg-[#1DA1F2]' },
-              { bg: 'bg-[#0077B5]' },
-              { bg: 'bg-[#E60023]' },
-            ].map((icon, i) => (
+            {socialMedia.map((social, i) => (
               <li key={i}>
-                <Link href="#" className="flex items-center space-x-2 text-sm hover:underline">
-                  <div className={`${icon.bg} rounded-full w-6 h-6 flex items-center justify-center`}>
-                    <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <circle cx="12" cy="12" r="10" />
-                    </svg>
+                <a
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-sm hover:underline"
+                >
+                  <div className={`${social.bg} rounded-full w-6 h-6 flex items-center justify-center`}>
+                    {social.icon}
                   </div>
-                </Link>
+                  <span className="hidden sm:inline">{social.name}</span>
+                </a>
               </li>
             ))}
           </ul>
@@ -96,9 +134,14 @@ const Footer = () => {
       </div>
 
       {/* Copyright */}
-      <div className="mt-12 text-xs text-black flex flex-col items-start sm:items-center justify-center text-left sm:text-center">
+      <div className="mt-12 -mb-6 text-xs text-black flex flex-col items-start sm:items-center justify-center text-left sm:text-center">
         <p>Copyright © 2025 Jail Luxury. All rights reserved.</p>
-        <p>Designed and Developed by <a href="#" className="underline text-blue-600">Sands Technology Solution</a></p>
+        <p>
+          Designed and Developed by {'{Himalaya Singh & Alok Kumar} '}
+          <a href="#" className="underline text-blue-600">
+            Six Technology Solution
+          </a>
+        </p>
       </div>
     </footer>
   );
