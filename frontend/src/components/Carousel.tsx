@@ -86,7 +86,7 @@ export default function Carousel() {
   }
 
   return (
-    <div className="relative w-full h-64 md:h-96 overflow-hidden rounded-lg">
+    <div className="relative w-full h-64 md:h-96 overflow-hidden">
       {/* Carousel Images */}
       <div className="relative w-full h-full">
         {carouselItems.map((item, index) => (
@@ -113,7 +113,7 @@ export default function Carousel() {
         ))}
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows
       {carouselItems.length > 1 && (
         <>
           <button
@@ -133,7 +133,7 @@ export default function Carousel() {
             </svg>
           </button>
         </>
-      )}
+      )} */}
 
       {/* Dots Indicator */}
       {carouselItems.length > 1 && (
