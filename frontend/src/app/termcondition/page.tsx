@@ -55,14 +55,14 @@ const termsContent = [
 
 const TermsCondition: React.FC = () => {
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen p-8">
       {/* Fixed Header */}
-      <h1 className="bg-[#f2efe9] w-full h-[60px] flex items-center justify-center text-lg font-bold fixed  left-0 z-50 text-black shadow-md">
+      <h1 className=" w-full flex items-center justify-center text-2xl font-bold text-black">
         Terms and Conditions
       </h1>
 
       {/* Main Content */}
-      <main className="bg-[#f2efe9] text-[#2c2c2c] max-w-3xl mx-auto pt-[120px] pb-10 px-5 mb-1 ">
+      <main className=" text-[#2c2c2c] w-full mx-auto pb-10 px-5 mb-1 ">
         {termsContent.map((section, index) => (
           <div key={index}>
             <h2 className="text-lg font-bold mt-8 text-gray-900">

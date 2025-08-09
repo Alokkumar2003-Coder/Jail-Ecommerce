@@ -9,7 +9,13 @@ interface OrderItem {
   id: number;
   quantity: number;
   price: number;
-  product: {
+  Product?: {
+    id: number;
+    title: string;
+    images: string[];
+  };
+  // Backward compatibility if API ever sends lowercase
+  product?: {
     id: number;
     title: string;
     images: string[];
@@ -24,7 +30,10 @@ interface Order {
   paymentStatus: string;
   shippingAddress: string;
   createdAt: string;
-  orderItems: OrderItem[];
+  // Sequelize include default
+  OrderItems?: OrderItem[];
+  // Backward compatibility if lowercase is used elsewhere
+  orderItems?: OrderItem[];
 }
 
 export default function OrderConfirmationPage() {
@@ -136,20 +145,24 @@ export default function OrderConfirmationPage() {
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Order Items</h2>
             <div className="space-y-4">
-              {order.orderItems.map((item) => (
-                <div key={item.id} className="flex items-center space-x-4 p-4 border rounded-lg">
-                  <img
-                    src={item.product.images[0]}
-                    alt={item.product.title}
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-medium">{item.product.title}</h3>
-                    <p className="text-gray-600">Quantity: {item.quantity}</p>
+              {(order.OrderItems ?? order.orderItems ?? []).map((item) => {
+                const product = item.Product ?? item.product;
+                const image = product?.images?.[0] || '/placeholder.png';
+                return (
+                  <div key={item.id} className="flex items-center space-x-4 p-4 border rounded-lg">
+                    <img
+                      src={image}
+                      alt={product?.title || 'Product'}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-medium">{product?.title || 'Product'}</h3>
+                      <p className="text-gray-600">Quantity: {item.quantity}</p>
+                    </div>
+                    <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
-                  <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -157,13 +170,13 @@ export default function OrderConfirmationPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => router.push('/orders')}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 cursor-pointer text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
               View My Orders
             </button>
             <button
               onClick={() => router.push('/products')}
-              className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+              className="bg-gray-600 cursor-pointer text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               Continue Shopping
             </button>

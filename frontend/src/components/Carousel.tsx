@@ -86,7 +86,7 @@ export default function Carousel() {
   }
 
   return (
-    <div className="w-full relative h-96">
+    <div className="w-full relative h-30 md:h-62">
       {/* Carousel Images */}
       <div className=" w-full h-full relative">
         {carouselItems.map((item, index) => (
@@ -142,7 +142,7 @@ export default function Carousel() {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
+              className={`md:w-3 md:h-3 w-2 h-2 rounded-full transition-colors ${
                 index === currentIndex ? 'bg-white' : 'bg-white/50'
               }`}
             />

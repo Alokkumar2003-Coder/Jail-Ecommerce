@@ -7,7 +7,7 @@ import api from '../../utils/axios';
 
 interface StripeCheckoutFormProps {
   amount: number;
-  onSuccess: () => void;
+  onSuccess: (orderId: number) => void;
   customerDetails: {
     name: string;
     email: string;
@@ -78,8 +78,8 @@ export default function StripeCheckoutForm({
             orderNotes: orderNotes || null,
           };
 
-          await api.post('/orders', orderData);
-          onSuccess();
+          const { data } = await api.post('/orders', orderData);
+          onSuccess(data.id);
         } catch (orderError) {
           console.error('Error creating order:', orderError);
           setError('Payment successful but order creation failed. Please contact support.');

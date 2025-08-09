@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { logout } from '../redux/authSlice';
@@ -8,6 +8,7 @@ import {
 } from 'react-icons/fi';
 import { usePathname } from 'next/navigation';
 import OrderTracking from './OrderTracking';
+import api from '../utils/axios';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -16,6 +17,14 @@ export default function Navbar() {
   const { items } = useAppSelector((state) => state.cart);
   const { productIds } = useAppSelector((state) => state.wishlist);
   const pathname = usePathname();
+
+  const [categories, setCategories] = useState<Array<{ id: number; name: string }>>([]);
+
+  useEffect(() => {
+    api.get('/categories')
+      .then(res => setCategories(res.data || []))
+      .catch(() => setCategories([]));
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -31,7 +40,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white font-serif relative z-50" role="navigation">
+    <nav className="bg-white relative z-50 px-4" role="navigation">
       {/* Mobile Navbar */}
       <div className="flex justify-between items-center px-4 py-4 md:hidden">
         <div className="flex items-center space-x-4">
@@ -43,13 +52,10 @@ export default function Navbar() {
         <Link href="/" className="text-2xl font-bold tracking-widest text-black">JAIL</Link>
 
         <div className="flex items-center space-x-4">
-          <button
-            onClick={() => setShowOrderTracking(true)}
-            aria-label="Track Order"
-            className="relative"
-          >
-            <FiPackage size={22} className="text-black" />
-          </button>
+          
+          <Link href="/orders" aria-label="My Orders">
+                    <FiPackage size={18} />
+                  </Link>
           <Link href={user ? '/profile' : '/login'} aria-label="User profile">
             <FiUser size={22} className="text-black" />
           </Link>
@@ -67,7 +73,7 @@ export default function Navbar() {
       {/* Mobile Menu Sidebar */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={toggleMobileMenu}></div>
+          <div className="absolute inset-0 bg-black/50" onClick={toggleMobileMenu}></div>
 
           <div className="absolute top-0 left-0 w-64 h-full bg-white shadow-xl">
             <div className="flex justify-end p-4">
@@ -76,7 +82,7 @@ export default function Navbar() {
               </button>
             </div>
 
-            <div className="flex flex-col space-y-6 p-4 text-lg font-semibold text-black">
+            <div className="flex flex-col space-y-6 p-4 text-md text-black">
               <Link href="/products" onClick={toggleMobileMenu}>Products</Link>
               <Link href="/blog" onClick={toggleMobileMenu}>Blog</Link>
               <Link href="/cart" onClick={toggleMobileMenu}>Cart</Link>
@@ -90,16 +96,20 @@ export default function Navbar() {
                 <FiPackage size={20} /> Track Order
               </button>
 
-              {navLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={toggleMobileMenu}
-                  className={pathname === href ? 'text-blue-500 font-bold' : ''}
-                >
-                  {label}
-                </Link>
-              ))}
+             {/* Categories Section - mobile */}
+             <div className="border-t border-gray-200 pt-4">
+                <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Categories</h3>
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/categories/${cat.id}`}
+                    onClick={toggleMobileMenu}
+                    className={`block py-2 pl-4 ${pathname === `/categories/${cat.id}` ? 'text-blue-500 font-bold' : 'text-gray-700'}`}
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
 
               <Link href="/about" onClick={toggleMobileMenu}>About Us</Link>
 
@@ -132,16 +142,16 @@ export default function Navbar() {
       <div className="hidden md:block w-full border-b border-gray-200">
         <div className="bg-white ">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-4xl mx-5 relative top-4 font-bold text-gray-900">JAIL</Link>
+            <Link href="/" className="text-4xl relative top-4 font-bold text-gray-900">JAIL</Link>
 
-            <div className="flex items-center gap-6 text-lg font-semibold">
-              {navLinks.map(({ href, label }) => (
+            <div className="flex items-center gap-6 text-md ">
+              {categories.map((cat) => (
                 <Link
-                  key={href}
-                  href={href}
-                  className={`hover:text-gray-900 transition-colors duration-200 ${pathname === href ? 'text-blue-500 ' : ''}`}
+                  key={cat.id}
+                  href={`/categories/${cat.id}`}
+                  className={`hover:text-gray-900 transition-colors duration-200 ${pathname === `/categories/${cat.id}` ? 'text-blue-500 ' : ''}`}
                 >
-                  {label}
+                  {cat.name}
                 </Link>
               ))}
             </div>
@@ -158,13 +168,7 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* <button
-                onClick={() => setShowOrderTracking(true)}
-                aria-label="Track Order"
-                className="relative"
-              >
-                <FiPackage size={18} />
-              </button> */}
+              
 
               <Link href="/cart" className="relative" aria-label="Cart">
                 <FiShoppingCart size={18} />
@@ -204,11 +208,11 @@ export default function Navbar() {
       </div>
 
       {/* Order Tracking Modal */}
-      {showOrderTracking && (
+      {/* {showOrderTracking && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <OrderTracking onClose={() => setShowOrderTracking(false)} />
         </div>
-      )}
+      )} */}
     </nav>
   );
 }
