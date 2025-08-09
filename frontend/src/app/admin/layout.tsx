@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { Menu, X } from 'lucide-react'; // Icons for mobile toggle
+import { Menu, X } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAppSelector((state) => state.auth);
@@ -47,20 +47,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Sidebar */}
       <nav
-  className={clsx(
-    'bg-white shadow-lg p-6 md:block',
-    'md:w-60 w-64', // same width mobile & desktop
-    'fixed md:static top-0 left-0 h-full z-50', // full height on mobile
-    'transform transition-transform duration-200 ease-in-out',
-    menuOpen ? 'translate-x-0' : '-translate-x-full' // hide left when closed
-  )}
->
+        className={clsx(
+          'bg-white shadow-lg p-6 md:block',
+          'md:w-60 w-64 h-full',
+          'fixed md:static top-0 left-0 transform transition-transform duration-200 ease-in-out z-50',
+          menuOpen ? 'translate-x-0' : '-translate-x-full', // mobile toggle
+          'md:translate-x-0' // always visible on desktop
+        )}
+      >
         <div className="flex flex-col items-center space-y-6 mt-6">
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              onClick={() => setMenuOpen(false)} // close menu on mobile after click
+              onClick={() => setMenuOpen(false)}
               className={clsx(
                 'px-4 py-2 rounded text-black transition-colors w-full text-center',
                 pathname === href
@@ -77,7 +77,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Overlay for mobile */}
       {menuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 md:hidden"
+          className="fixed inset-0 bg-black/50 md:hidden z-40"
           onClick={() => setMenuOpen(false)}
         ></div>
       )}

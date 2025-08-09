@@ -129,17 +129,17 @@ export default function AdminOrdersPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-2">
       <h1 className="text-3xl font-bold mb-6">Manage Orders</h1>
       
       <div className="space-y-6">
         {orders.map((order) => (
-          <div key={order.id} className="bg-white border rounded-lg p-6 shadow-sm">
+          <div key={order.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-lg">
             {/* Order Header */}
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-lg font-semibold">Order #{order.id}</h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm">
                   {order.customerName || order.User?.name || 'Customer'} 
                   ({order.customerEmail || order.User?.email || 'No email'})
                 </p>
@@ -151,8 +151,8 @@ export default function AdminOrdersPage() {
                 )}
               </div>
               <div className="text-right">
-                <p className="text-xl font-bold">₹{order.totalPrice.toFixed(2)}</p>
-                <div className="flex space-x-2 mt-2">
+                <p className="text-xl font-bold">${order.totalPrice.toFixed(2)}</p>
+                <div className="flex flex-col space-y-2 mt-2">
                   <span className={`px-2 py-1 rounded text-xs ${getStatusColor(order.status)}`}>
                     {order.status}
                   </span>
