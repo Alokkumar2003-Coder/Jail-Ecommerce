@@ -29,7 +29,7 @@ export default function CartPage() {
           <div className="lg:col-span-2">
             <div className="space-y-4">
               {items.map((item) => (
-                <div key={item.productId} className="flex items-center gap-4 border rounded-lg p-4">
+                <div key={item.productId} className="flex items-center gap-4 border border-gray-100 shadow-lg rounded-lg p-4">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -46,7 +46,7 @@ export default function CartPage() {
                         onChange={(e) =>
                           dispatch(updateQuantity({ productId: item.productId, quantity: Number(e.target.value) }))
                         }
-                        className="w-16 border rounded p-1"
+                        className="w-16 border border-gray-400 rounded shadow-lg p-1"
                       />
                       <button
                         onClick={() => dispatch(removeFromCart(item.productId))}
@@ -62,7 +62,7 @@ export default function CartPage() {
           </div>
           
           <div className="lg:col-span-1">
-            <div className="border rounded-lg p-6">
+            <div className="border border-gray-100 shadow-lg rounded-lg p-6">
               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
               <div className="space-y-2 mb-4">
                 {items.map((item) => (
@@ -81,7 +81,7 @@ export default function CartPage() {
               <div className="mt-6 space-y-2">
                 <button
                   onClick={() => dispatch(clearCart())}
-                  className="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400 transition-colors"
+                  className="w-full bg-red-500 cursor-pointer text-white py-2 px-4 rounded hover:bg-red-600 transition-colors"
                 >
                   Clear Cart
                 </button>

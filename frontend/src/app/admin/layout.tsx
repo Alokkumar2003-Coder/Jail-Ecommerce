@@ -2,14 +2,16 @@
 
 import { useAppSelector } from '../../redux/hooks';
 import { useRouter, usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import clsx from 'clsx'; // Optional for cleaner className
+import clsx from 'clsx';
+import { Menu, X } from 'lucide-react'; // Icons for mobile toggle
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!user || user.role !== 'admin') {
@@ -22,7 +24,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   const navLinks = [
-    // { href: '/admin', label: 'Admin' },
     { href: '/admin/carousel', label: 'Carousel' },
     { href: '/admin/products', label: 'Products' },
     { href: '/admin/categories', label: 'Categories' },
@@ -30,38 +31,58 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/users', label: 'Users' },
     { href: '/admin/analytics', label: 'Analytics' },
     { href: '/admin/blogs', label: 'Blog' },
-    { href: '/admin/analytics', label: 'News' },
+    { href: '/admin/news', label: 'News' },
     { href: '/', label: 'Back to Store' },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <nav className=" text-white shadow-lg p-6">
-        <div className="px-4 flex flex-col">
-          {/* <div className='w-full'>
-            <Link href="/admin" className="bg-blue-500 rounded-md p-2 w-full">Admin Panel</Link>
-          </div> */}
-          <div className="flex flex-col justify-between items-center h-16 gap-4">
-            <div className="flex flex-col items-center space-y-6 mt-6">
-              {navLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className={clsx(
-                    'px-4 py-2 rounded text-black transition-colors w-full text-center ',
-                    pathname === href
-                      ? 'bg-gray-800 text-white  font-semibold'
-                      : 'hover:text-gray-300'
-                  )}
-                >
-                  {label}
-                </Link>
-              ))}
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+      {/* Mobile Header */}
+      <div className="md:hidden flex justify-between items-center p-4 bg-gray-800 text-white">
+        <h1 className="text-lg font-semibold">Admin Panel</h1>
+        <button onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Sidebar */}
+      <nav
+  className={clsx(
+    'bg-white shadow-lg p-6 md:block',
+    'md:w-60 w-64', // same width mobile & desktop
+    'fixed md:static top-0 left-0 h-full z-50', // full height on mobile
+    'transform transition-transform duration-200 ease-in-out',
+    menuOpen ? 'translate-x-0' : '-translate-x-full' // hide left when closed
+  )}
+>
+        <div className="flex flex-col items-center space-y-6 mt-6">
+          {navLinks.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setMenuOpen(false)} // close menu on mobile after click
+              className={clsx(
+                'px-4 py-2 rounded text-black transition-colors w-full text-center',
+                pathname === href
+                  ? 'bg-gray-800 text-white font-semibold'
+                  : 'hover:bg-gray-100'
+              )}
+            >
+              {label}
+            </Link>
+          ))}
         </div>
       </nav>
 
+      {/* Overlay for mobile */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 md:hidden"
+          onClick={() => setMenuOpen(false)}
+        ></div>
+      )}
+
+      {/* Main content */}
       <main className="w-full p-4">{children}</main>
     </div>
   );

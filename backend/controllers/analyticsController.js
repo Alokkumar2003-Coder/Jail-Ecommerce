@@ -103,49 +103,49 @@ export const getSalesByDay = async (req, res) => {
   }
 };
 
-export const getTopProducts = async (req, res) => {
-  try {
-    const topProducts = await db.OrderItem.findAll({
-      attributes: [
-        'productId',
-        [fn('SUM', col('quantity')), 'totalSold'],
-        [fn('SUM', literal('quantity * price')), 'totalRevenue'],
-      ],
-      include: [{ model: db.Product, attributes: ['title', 'price'] }],
-      group: ['productId', 'Product.id'],
-      order: [[fn('SUM', col('quantity')), 'DESC']],
-      limit: 10,
-    });
-    res.json(topProducts);
-  } catch (err) {
-    console.error('Error in getTopProducts:', err);
-    res.status(500).json({ message: err.message });
-  }
-};
+// export const getTopProducts = async (req, res) => {
+//   try {
+//     const topProducts = await db.OrderItem.findAll({
+//       attributes: [
+//         'productId',
+//         [fn('SUM', col('quantity')), 'totalSold'],
+//         [fn('SUM', literal('quantity * price')), 'totalRevenue'],
+//       ],
+//       include: [{ model: db.Product, attributes: ['title', 'price'] }],
+//       group: ['productId', 'Product.id'],
+//       order: [[fn('SUM', col('quantity')), 'DESC']],
+//       limit: 10,
+//     });
+//     res.json(topProducts);
+//   } catch (err) {
+//     console.error('Error in getTopProducts:', err);
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
-export const getCategoryStats = async (req, res) => {
-  try {
-    const categoryStats = await db.OrderItem.findAll({
-      attributes: [
-        [fn('SUM', col('quantity')), 'totalSold'],
-        [fn('SUM', literal('quantity * price')), 'totalRevenue'],
-      ],
-      include: [
-        { 
-          model: db.Product, 
-          attributes: ['categoryId'],
-          include: [{ model: db.Category, attributes: ['name'] }]
-        }
-      ],
-      group: ['Product.categoryId', 'Product.Category.id'],
-      order: [[fn('SUM', literal('quantity * price')), 'DESC']],
-    });
-    res.json(categoryStats);
-  } catch (err) {
-    console.error('Error in getCategoryStats:', err);
-    res.status(500).json({ message: err.message });
-  }
-};
+// export const getCategoryStats = async (req, res) => {
+//   try {
+//     const categoryStats = await db.OrderItem.findAll({
+//       attributes: [
+//         [fn('SUM', col('quantity')), 'totalSold'],
+//         [fn('SUM', literal('quantity * price')), 'totalRevenue'],
+//       ],
+//       include: [
+//         { 
+//           model: db.Product, 
+//           attributes: ['categoryId'],
+//           include: [{ model: db.Category, attributes: ['name'] }]
+//         }
+//       ],
+//       group: ['Product.categoryId', 'Product.Category.id'],
+//       order: [[fn('SUM', literal('quantity * price')), 'DESC']],
+//     });
+//     res.json(categoryStats);
+//   } catch (err) {
+//     console.error('Error in getCategoryStats:', err);
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
 export const getRecentOrders = async (req, res) => {
   try {
@@ -164,22 +164,87 @@ export const getRecentOrders = async (req, res) => {
   }
 };
 
-export const getInventoryStats = async (req, res) => {
-  try {
-    const totalProducts = await db.Product.count();
-    const outOfStock = await db.Product.count({ where: { stock: 0 } });
-    const lowStock = await db.Product.count({ where: { stock: { [Op.lte]: 10 } } });
-    const totalValue = await db.Product.sum(literal('stock * price'));
+// export const getInventoryStats = async (req, res) => {
+//   try {
+//     const totalProducts = await db.Product.count();
+//     const outOfStock = await db.Product.count({ where: { stock: 0 } });
+//     const lowStock = await db.Product.count({ where: { stock: { [Op.lte]: 10 } } });
+//     const totalValue = await db.Product.sum(literal('stock * price'));
     
-    res.json({
-      totalProducts,
-      outOfStock,
-      lowStock,
-      totalValue: totalValue || 0,
-      stockUtilization: totalProducts > 0 ? ((totalProducts - outOfStock) / totalProducts * 100).toFixed(1) : '0.0'
+//     res.json({
+//       totalProducts,
+//       outOfStock,
+//       lowStock,
+//       totalValue: totalValue || 0,
+//       stockUtilization: totalProducts > 0 ? ((totalProducts - outOfStock) / totalProducts * 100).toFixed(1) : '0.0'
+//     });
+//   } catch (err) {
+//     console.error('Error in getInventoryStats:', err);
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
+export const getTopProducts = async (req, res) => {
+  try {
+    const topProducts = await db.OrderItem.findAll({
+      attributes: [
+        'productId',
+        [fn('SUM', col('OrderItem.quantity')), 'totalSold'],
+        [fn('SUM', literal('`OrderItem`.`quantity` * `OrderItem`.`price`')), 'totalRevenue']
+      ],
+      include: [
+        {
+          model: db.Product,
+          attributes: ['id', 'title', 'price']
+        }
+      ],
+      group: [
+        'productId',
+        'Product.id',
+        'Product.title',
+        'Product.price'
+      ],
+      order: [[fn('SUM', col('OrderItem.quantity')), 'DESC']],
+      limit: 10
     });
+
+    res.json(topProducts);
   } catch (err) {
-    console.error('Error in getInventoryStats:', err);
+    console.error('Error in getTopProducts:', err);
+    res.status(500).json({ message: err.message });
+  }
+};
+export const getCategoryStats = async (req, res) => {
+  try {
+    const categoryStats = await db.OrderItem.findAll({
+      attributes: [
+        [fn('SUM', col('OrderItem.quantity')), 'totalSold'],
+        [fn('SUM', literal('`OrderItem`.`quantity` * `OrderItem`.`price`')), 'totalRevenue']
+      ],
+      include: [
+        {
+          model: db.Product,
+          attributes: ['id', 'categoryId'],
+          include: [
+            {
+              model: db.Category,
+              attributes: ['id', 'name']
+            }
+          ]
+        }
+      ],
+      group: [
+        'Product.categoryId',
+        'Product.id',
+        'Product.Category.id',
+        'Product.Category.name'
+      ],
+      order: [[fn('SUM', literal('`OrderItem`.`quantity` * `OrderItem`.`price`')), 'DESC']]
+    });
+
+    res.json(categoryStats);
+  } catch (err) {
+    console.error('Error in getCategoryStats:', err);
     res.status(500).json({ message: err.message });
   }
 };

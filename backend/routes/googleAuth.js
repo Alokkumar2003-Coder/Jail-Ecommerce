@@ -4,17 +4,27 @@ import { generateToken } from '../utils/jwt.js';
 
 const router = express.Router();
 
-router.get(
-  '/',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
+router.get('/', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get(
   '/callback',
-  passport.authenticate('google', { session: false, failureRedirect: '/login' }),
+  passport.authenticate('google', {
+    session: false,
+    failureRedirect: (process.env.FRONTEND_URL || '') + '/login',
+  }),
   (req, res) => {
     const token = generateToken(req.user);
-    // For production, redirect to frontend with token as query param
+    const frontendURL =
+      process.env.FRONTEND_URL ||
+      process.env.CLIENT_URL ||
+      process.env.NEXT_PUBLIC_FRONTEND_URL;
+
+    if (frontendURL) {
+      const redirectUrl = `${frontendURL.replace(/\/$/, '')}/callback?token=${encodeURIComponent(token)}`;
+      return res.redirect(302, redirectUrl);
+    }
+
+    // Fallback only if no frontend URL is configured
     res.json({
       user: {
         id: req.user.id,

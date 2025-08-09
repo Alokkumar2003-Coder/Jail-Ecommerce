@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import api from '../../../utils/axios';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid,
+  BarChart, Bar, ResponsiveContainer
+} from 'recharts';
 
 interface AnalyticsSummary {
   totalOrders: number;
@@ -14,21 +17,12 @@ interface AnalyticsSummary {
   pendingOrders: number;
 }
 
-interface InventoryStats {
-  totalProducts: number;
-  outOfStock: number;
-  lowStock: number;
-  totalValue: number;
-  stockUtilization: string;
-}
-
 export default function AnalyticsPage() {
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
   const [salesByDay, setSalesByDay] = useState<any[]>([]);
   const [topProducts, setTopProducts] = useState<any[]>([]);
   const [categoryStats, setCategoryStats] = useState<any[]>([]);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
-  const [inventoryStats, setInventoryStats] = useState<InventoryStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,13 +30,12 @@ export default function AnalyticsPage() {
       try {
         setLoading(true);
         
-        const [summaryRes, salesRes, productsRes, categoryRes, ordersRes, inventoryRes] = await Promise.all([
+        const [summaryRes, salesRes, productsRes, categoryRes, ordersRes] = await Promise.all([
           api.get('/analytics/summary'),
           api.get('/analytics/sales-by-day'),
           api.get('/analytics/top-products'),
           api.get('/analytics/category-stats'),
           api.get('/analytics/recent-orders'),
-          api.get('/analytics/inventory-stats'),
         ]);
 
         console.log('Analytics data:', {
@@ -51,7 +44,6 @@ export default function AnalyticsPage() {
           products: productsRes.data,
           categories: categoryRes.data,
           orders: ordersRes.data,
-          inventory: inventoryRes.data,
         });
 
         setSummary(summaryRes.data);
@@ -59,7 +51,6 @@ export default function AnalyticsPage() {
         setTopProducts(productsRes.data);
         setCategoryStats(categoryRes.data);
         setRecentOrders(ordersRes.data);
-        setInventoryStats(inventoryRes.data);
       } catch (error: any) {
         console.error('Error fetching analytics:', error);
         if (error.response?.status === 401) {
@@ -74,9 +65,7 @@ export default function AnalyticsPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="text-center">Loading...</div>
-    );
+    return <div className="text-center">Loading...</div>;
   }
 
   return (
@@ -113,7 +102,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Sales (Last 30 Days)</h2>
-          {salesByDay && salesByDay.length > 0 ? (
+          {salesByDay.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={salesByDay}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -132,7 +121,7 @@ export default function AnalyticsPage() {
 
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Top Products</h2>
-          {topProducts && topProducts.length > 0 ? (
+          {topProducts.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={topProducts.map(p => ({
                 name: p.Product?.title || 'Unknown',
@@ -153,62 +142,31 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Inventory Stats */}
-      {inventoryStats && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Inventory Overview</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-blue-600">{inventoryStats.totalProducts || 0}</p>
-                <p className="text-sm text-gray-600">Total Products</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-red-600">{inventoryStats.outOfStock || 0}</p>
-                <p className="text-sm text-gray-600">Out of Stock</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-orange-600">{inventoryStats.lowStock || 0}</p>
-                <p className="text-sm text-gray-600">Low Stock</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-green-600">{inventoryStats.stockUtilization || '0.0'}%</p>
-                <p className="text-sm text-gray-600">Stock Utilization</p>
-              </div>
-            </div>
-            <div className="mt-4 p-4 bg-gray-50 rounded">
-              <p className="text-sm text-gray-600">
-                Total Inventory Value: <span className="font-semibold">${(inventoryStats.totalValue || 0).toFixed(2)}</span>
-              </p>
-            </div>
+      {/* Category Performance */}
+      <div className="bg-white p-6 rounded-lg shadow mb-8">
+        <h2 className="text-xl font-semibold mb-4">Category Performance</h2>
+        {categoryStats.length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={categoryStats.map(c => ({
+              name: c.Product?.Category?.name || 'Unknown',
+              revenue: Number(c.totalRevenue) || 0,
+            }))}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
+              <YAxis />
+              <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Revenue']} />
+              <Bar dataKey="revenue" fill="#8b5cf6" />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-64 flex items-center justify-center text-gray-500">
+            No category data available
           </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Category Performance</h2>
-            {categoryStats && categoryStats.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={categoryStats.map(c => ({
-                  name: c.Product?.Category?.name || 'Unknown',
-                  revenue: Number(c.totalRevenue) || 0,
-                }))}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-                  <YAxis />
-                  <Tooltip formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Revenue']} />
-                  <Bar dataKey="revenue" fill="#8b5cf6" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-64 flex items-center justify-center text-gray-500">
-                No category data available
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Recent Orders */}
-      {recentOrders && recentOrders.length > 0 && (
+      {recentOrders.length > 0 && (
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
           <div className="overflow-x-auto">

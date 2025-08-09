@@ -11,9 +11,9 @@ class User extends Model {
 User.init(
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    name: { type: DataTypes.STRING, allowNull: false },
-    email: { type: DataTypes.STRING, unique: true, allowNull: false, validate: { isEmail: true } },
-    password: { type: DataTypes.STRING, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: true },
+    email: { type: DataTypes.STRING, unique: true, allowNull: true, validate: { isEmail: true } },
+    password: { type: DataTypes.STRING, allowNull: true },
     role: { type: DataTypes.ENUM('user', 'admin'), defaultValue: 'user' },
     googleId: { type: DataTypes.STRING, allowNull: true },
     avatar: { type: DataTypes.STRING, allowNull: true },

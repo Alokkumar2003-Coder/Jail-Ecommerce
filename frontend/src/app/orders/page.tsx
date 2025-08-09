@@ -125,7 +125,7 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-6">
           {orders.map((order) => (
-            <div key={order.id} className="bg-white border rounded-lg p-6 shadow-sm">
+            <div key={order.id} className="bg-white border border-gray-100 rounded-lg p-6 shadow-lg">
               {/* Order Header */}
               <div className="flex justify-between items-start mb-4">
                 <div>
@@ -194,7 +194,7 @@ export default function OrdersPage() {
                             <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                           </div>
                         </div>
-                        <span className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                     ))
                   ) : (
@@ -249,7 +249,7 @@ export default function OrdersPage() {
                     setSelectedOrder(order);
                     setShowOrderDetails(true);
                   }}
-                  className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded text-sm hover:bg-blue-700 transition-colors"
                 >
                   View Details
                 </button>
@@ -289,7 +289,7 @@ export default function OrdersPage() {
                   <span className="font-medium">Order Date:</span> {formatDate(selectedOrder.createdAt)}
                 </div>
                 <div>
-                  <span className="font-medium">Total Amount:</span> ₹{selectedOrder.totalPrice.toFixed(2)}
+                  <span className="font-medium">Total Amount:</span> ${selectedOrder.totalPrice.toFixed(2)}
                 </div>
                 <div>
                   <span className="font-medium">Payment Method:</span> {selectedOrder.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
@@ -374,11 +374,11 @@ export default function OrdersPage() {
                           <div>
                             <p className="font-medium">{item.Product?.title || 'Product not found'}</p>
                             <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
-                            <p className="text-sm text-gray-600">Price: ₹{item.price?.toFixed(2) || 'N/A'}</p>
+                            <p className="text-sm text-gray-600">Price: ${item.price?.toFixed(2) || 'N/A'}</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
+                          <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
                         </div>
                       </div>
                     ))

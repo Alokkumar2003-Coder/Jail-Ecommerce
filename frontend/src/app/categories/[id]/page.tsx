@@ -124,7 +124,7 @@ export default function CategoryDetailPage() {
       <div className="mb-8">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           {category.image ? (
-            <div className="w-full md:w-64 h-48 md:h-64 rounded-full overflow-hidden shadow-lg">
+            <div className="w-20 h-20 md:h-40 md:w-40 rounded-full overflow-hidden shadow-lg">
               <img
                 src={category.image}
                 alt={category.name}

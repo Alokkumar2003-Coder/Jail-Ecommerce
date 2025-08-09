@@ -130,24 +130,24 @@ export default function CheckoutPage() {
                         <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                       </div>
                     </div>
-                    <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
               <div className="border-t pt-4 mt-4 space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>₹{subtotal.toFixed(2)}</span>
+                  <span>${subtotal.toFixed(2)}</span>
                 </div>
                 {codFee > 0 && (
                   <div className="flex justify-between">
                     <span>COD Fee:</span>
-                    <span>₹{codFee.toFixed(2)}</span>
+                    <span>${codFee.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total:</span>
-                  <span>₹{total.toFixed(2)}</span>
+                  <span>${total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -316,7 +316,7 @@ export default function CheckoutPage() {
                 <button
                   onClick={handleCODOrder}
                   disabled={isProcessing}
-                  className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full bg-green-600 cursor-pointer text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isProcessing ? 'Processing...' : `Place Order (₹${total.toFixed(2)})`}
                 </button>

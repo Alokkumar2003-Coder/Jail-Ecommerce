@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
-import { logout } from '../../redux/authSlice';
+import { logout, checkAuth } from '../../redux/authSlice';
 import { useRouter } from 'next/navigation';
 import api from '../../utils/axios';
 import ProtectedRoute from '../../components/ProtectedRoute';
@@ -149,16 +149,29 @@ export default function ProfilePage() {
       const response = await api.put('/users/profile', updateData);
       console.log('Profile update response:', response.data);
       
-      setUser(response.data);
+      const updated = response.data;
+      setUser(updated);
       setEditMode(false);
-      
-      // Clear password fields
-      setFormData(prev => ({
-        ...prev,
+
+      // Refresh form with latest values
+      setFormData({
+        name: updated.name,
+        email: updated.email,
+        phone: updated.phone || '',
+        address: updated.address || '',
+        city: updated.city || '',
+        state: updated.state || '',
+        zipCode: updated.zipCode || '',
+        country: updated.country || '',
+        dateOfBirth: updated.dateOfBirth || '',
+        gender: updated.gender || '',
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
-      }));
+      });
+
+      // refresh auth store so navbar and others reflect latest user
+      dispatch(checkAuth());
       
       alert('Profile updated successfully');
     } catch (error: any) {
